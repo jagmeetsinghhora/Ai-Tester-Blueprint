@@ -1,0 +1,16 @@
+{
+  "name": "login-automation-qa-agent",
+  "version": "1.0.0",
+  "description": "Autonomous QA Agent - Playwright MCP Automation with RICE POT",
+  "main": "scripts/login_tests.js",
+  "scripts": {
+    "test": "node scripts/login_tests.js"
+  },
+  "dependencies": {
+    "playwright": "^1.42.0",
+    "exceljs": "^4.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

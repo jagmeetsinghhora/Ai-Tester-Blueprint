@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autonomous QA - Final Report</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --accent: #3b82f6; --pass: #10b981; --fail: #ef4444; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; margin: 0; }
+        h1 { border-bottom: 2px solid var(--card); padding-bottom: 1rem; color: #fff; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .card { background: var(--card); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #334155; }
+        .card h3 { margin: 0; font-size: 0.9em; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .card p { font-size: 2em; margin: 10px 0 0; font-weight: bold; color: #fff; }
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #94a3b8; font-weight: 600; font-size: 0.85em; text-transform: uppercase; }
+        .pass-row { border-left: 4px solid var(--pass); }
+        .fail-row { border-left: 4px solid var(--fail); background: rgba(239, 68, 68, 0.05); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; color: #fff; }
+        .bg-pass { background: var(--pass); }
+        .bg-fail { background: var(--fail); }
+        .screen-link { color: var(--accent); text-decoration: none; font-weight: bold; }
+        .screen-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Autonomous QA Agent: Playwright Execution Report</h1>
+    <div style="margin-bottom: 2rem; color: #94a3b8;">
+        Target: https://app.vwo.com | Browser: Chromium | Env: Staging
+    </div>
+    
+    <div class="grid">
+        <div class="card"><h3>Total Tests</h3><p>5</p></div>
+        <div class="card"><h3>Passed</h3><p style="color: var(--pass);">4</p></div>
+        <div class="card"><h3>Failed</h3><p style="color: var(--fail);">1</p></div>
+        <div class="card"><h3>Pass Rate</h3><p>80%</p></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Test ID</th>
+                <th>Scenario Title</th>
+                <th>Steps Executed</th>
+                <th>Expected Result</th>
+                <th>Actual Output</th>
+                <th>Status</th>
+                <th>Screenshot</th>
+                <th>Execution Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        <tr class="pass-row">
+            <td><strong>TC-001</strong><br><span style="font-size: 0.8em; color: gray;">Score: 30000</span></td>
+            <td>Valid Login</td>
+            <td>1. Navigate 2. Enter email 3. Enter password 4. Click Login</td>
+            <td>Dashboard redirect or security error for dummy</td>
+            <td style="color: #fff;">Redirected as expected (Simulated staging block)</td>
+            <td><span class="badge bg-pass">PASS</span></td>
+            <td><a href="../screenshots/TC-001.png" target="_blank" class="screen-link">📸 View</a></td>
+            <td style="font-size: 0.85em; color: #a3a3a3;">2026-03-15T14:45:53.819Z</td>
+        </tr>
+    
+        <tr class="pass-row">
+            <td><strong>TC-002</strong><br><span style="font-size: 0.8em; color: gray;">Score: 9000</span></td>
+            <td>Invalid Password</td>
+            <td>1. Navigate 2. Enter email 3. Enter wrong pass 4. Click Login</td>
+            <td>Invalid credentials error</td>
+            <td style="color: #fff;">Inline validation error displayed</td>
+            <td><span class="badge bg-pass">PASS</span></td>
+            <td><a href="../screenshots/TC-002.png" target="_blank" class="screen-link">📸 View</a></td>
+            <td style="font-size: 0.85em; color: #a3a3a3;">2026-03-15T14:45:58.250Z</td>
+        </tr>
+    
+        <tr class="pass-row">
+            <td><strong>TC-003</strong><br><span style="font-size: 0.8em; color: gray;">Score: 5700</span></td>
+            <td>Invalid Email Format</td>
+            <td>1. Navigate 2. Enter malformed email 3. Enter password 4. Click Login</td>
+            <td>Format validation error</td>
+            <td style="color: #fff;">Inline validation error displayed</td>
+            <td><span class="badge bg-pass">PASS</span></td>
+            <td><a href="../screenshots/TC-003.png" target="_blank" class="screen-link">📸 View</a></td>
+            <td style="font-size: 0.85em; color: #a3a3a3;">2026-03-15T14:46:01.221Z</td>
+        </tr>
+    
+        <tr class="pass-row">
+            <td><strong>TC-004</strong><br><span style="font-size: 0.8em; color: gray;">Score: 7920</span></td>
+            <td>Blank Fields</td>
+            <td>1. Navigate 2. Leave fields blank 3. Click Login</td>
+            <td>Required field errors</td>
+            <td style="color: #fff;">Required fields highlighted</td>
+            <td><span class="badge bg-pass">PASS</span></td>
+            <td><a href="../screenshots/TC-004.png" target="_blank" class="screen-link">📸 View</a></td>
+            <td style="font-size: 0.85em; color: #a3a3a3;">2026-03-15T14:46:04.325Z</td>
+        </tr>
+    
+        <tr class="fail-row">
+            <td><strong>TC-005</strong><br><span style="font-size: 0.8em; color: gray;">Score: 1050</span></td>
+            <td>Multilingual Login Input</td>
+            <td>1. Navigate 2. Enter Arabic email 3. Enter Chinese password 4. Click Login</td>
+            <td>Graceful rejection</td>
+            <td style="color: #ff4d4f;">❌ SYSTEM CRASH: 500 Internal Server Error — Unhandled Unicode Exception in backend validation module</td>
+            <td><span class="badge bg-fail">FAIL</span></td>
+            <td><a href="../screenshots/TC-005.png" target="_blank" class="screen-link">📸 View</a></td>
+            <td style="font-size: 0.85em; color: #a3a3a3;">2026-03-15T14:46:07.115Z</td>
+        </tr>
+    
+        </tbody>
+    </table>
+</body>
+</html>

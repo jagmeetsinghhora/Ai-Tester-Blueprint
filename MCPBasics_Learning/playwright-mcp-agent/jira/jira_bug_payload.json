@@ -1,0 +1,15 @@
+{
+  "fields": {
+    "project": {
+      "key": "KAN"
+    },
+    "summary": "TC-005: Login fails when multilingual credentials are used",
+    "description": "Login validation does not handle Unicode inputs such as Arabic or Chinese characters.\n\n*Steps to Reproduce:*\n1. Navigate to https://app.vwo.com\n2. Enter Arabic email (مستخدم@مثال.كوم)\n3. Enter Chinese characters as password (测试@例子.com)\n4. Click Login\n\n*Expected Result:*\nSystem should reject multilingual credentials gracefully.\n\n*Actual Result:*\nLogin validation fails with ❌ SYSTEM CRASH: 500 Internal Server Error — Unhandled Unicode Exception in backend validation module.\n\n*Environment:*\n- URL: https://app.vwo.com\n- Browser: Chromium\n- Automation Framework: Playwright MCP",
+    "issuetype": {
+      "name": "Bug"
+    },
+    "priority": {
+      "name": "Medium"
+    }
+  }
+}
