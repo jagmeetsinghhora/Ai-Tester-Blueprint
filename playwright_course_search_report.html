@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browser Action Report – Playwright Course Search</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg: #0d0f1a;
+      --surface: #161827;
+      --card: #1e2135;
+      --card-hover: #252842;
+      --accent: #6c63ff;
+      --accent2: #ff5f7e;
+      --pass: #34d399;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --border: #2e3250;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1a1b2e 0%, #16213e 60%, #0f3460 100%);
+      padding: 48px 40px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(108,99,255,.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(255,95,126,.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .header-inner {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(108,99,255,.18);
+      color: var(--accent);
+      border: 1px solid rgba(108,99,255,.4);
+      border-radius: 50px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    header p {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 600px;
+      line-height: 1.7;
+    }
+    .meta-row {
+      display: flex;
+      gap: 28px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .meta-chip strong { color: var(--text); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.pass { background: var(--pass); box-shadow: 0 0 6px var(--pass); }
+
+    /* ── Summary Stats ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      max-width: 1100px;
+      margin: 40px auto 0;
+      padding: 0 40px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      text-align: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(108,99,255,.15); }
+    .stat-card .num {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-card .label { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+    /* ── Section titles ── */
+    .section { max-width: 1100px; margin: 48px auto 0; padding: 0 40px; }
+    .section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+    }
+    .section h2 .icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* ── Action Timeline ── */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 52px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 0 16px rgba(108,99,255,.4);
+      margin-top: 4px;
+    }
+    .step-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      flex: 1;
+      margin-bottom: 16px;
+      transition: border-color .2s;
+    }
+    .step-content:hover { border-color: var(--accent); }
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .step-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .step-type {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 50px;
+    }
+    .type-navigate { background: rgba(52,211,153,.15); color: var(--pass); border: 1px solid rgba(52,211,153,.3); }
+    .type-click    { background: rgba(108,99,255,.15);  color: var(--accent);  border: 1px solid rgba(108,99,255,.3); }
+    .type-type     { background: rgba(251,191,36,.15);  color: #fbbf24; border: 1px solid rgba(251,191,36,.3); }
+    .type-scroll   { background: rgba(99,179,237,.15);  color: #63b3ed; border: 1px solid rgba(99,179,237,.3); }
+    .step-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .step-url  { font-size: 12px; color: var(--accent); margin-top: 6px; word-break: break-all; }
+
+    /* ── Screenshot Gallery ── */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+      gap: 24px;
+    }
+    .gallery-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .gallery-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(108,99,255,.2);
+      border-color: var(--accent);
+    }
+    .gallery-card img {
+      width: 100%;
+      display: block;
+      border-bottom: 1px solid var(--border);
+    }
+    .gallery-meta {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .gallery-step-badge {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .gallery-caption { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Result box ── */
+    .result-box {
+      background: linear-gradient(135deg, rgba(52,211,153,.08), rgba(108,99,255,.06));
+      border: 1px solid rgba(52,211,153,.25);
+      border-radius: 14px;
+      padding: 28px 32px;
+    }
+    .result-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--pass); }
+    .result-table { width: 100%; border-collapse: collapse; }
+    .result-table th, .result-table td {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .result-table th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; }
+    .result-table td { color: var(--text); }
+    .result-table tr:last-child td { border-bottom: none; }
+    .highlight { color: var(--accent); font-weight: 600; }
+    .price-tag { color: #fbbf24; font-weight: 700; }
+
+    footer {
+      max-width: 1100px;
+      margin: 60px auto 0;
+      padding: 24px 40px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header>
+  <div class="header-inner">
+    <div class="badge">🤖 AI Browser Session Report</div>
+    <h1>Playwright Course Search Report</h1>
+    <p>Automated browser exploration of <strong>courses.thetestingacademy.com</strong> to find and extract all Playwright course details.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><div class="dot pass"></div> Status: <strong>Completed</strong></div>
+      <div class="meta-chip">🌐 URL: <strong>courses.thetestingacademy.com</strong></div>
+      <div class="meta-chip">📅 Date: <strong>15 March 2026</strong></div>
+      <div class="meta-chip">🕐 Time: <strong>12:39 IST</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ STATS ═══════════════════════════ -->
+<div class="stats">
+  <div class="stat-card"><div class="num">8</div><div class="label">Screenshots Taken</div></div>
+  <div class="stat-card"><div class="num">10</div><div class="label">Actions Performed</div></div>
+  <div class="stat-card"><div class="num">1</div><div class="label">Playwright Course Found</div></div>
+  <div class="stat-card"><div class="num">₹15K</div><div class="label">Course Price (INR)</div></div>
+  <div class="stat-card"><div class="num">3</div><div class="label">Pages Visited</div></div>
+</div>
+
+<!-- ═══════════════════════════ ACTIONS ═══════════════════════════ -->
+<div class="section">
+  <h2><span class="icon">📋</span> Action Timeline</h2>
+  <div class="timeline">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Navigate to Homepage</span>
+          <span class="step-type type-navigate">Navigate</span>
+        </div>
+        <div class="step-desc">Opened the browser and navigated directly to The Testing Academy homepage.</div>
+        <div class="step-url">https://courses.thetestingacademy.com/</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Click "All Courses" in navigation</span>
+          <span class="step-type type-click">Click</span>
+        </div>
+        <div class="step-desc">Clicked on the <strong>ALL COURSES</strong> navigation link in the top menu bar to view the complete course listing.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Click the Search Box</span>
+          <span class="step-type type-click">Click</span>
+        </div>
+        <div class="step-desc">Clicked on the <strong>Search Course</strong> input box on the All Courses page to activate it for typing.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Type "Playwright" in Search</span>
+          <span class="step-type type-type">Type</span>
+        </div>
+        <div class="step-desc">Typed the keyword <strong>"Playwright"</strong> into the search input to filter relevant courses.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Click Search Button / Press Enter</span>
+          <span class="step-type type-click">Click</span>
+        </div>
+        <div class="step-desc">Pressed the search icon button to submit the search query. The page filtered to show <strong>1 Playwright course</strong>.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Click on "Playwright Automation Mastery" course</span>
+          <span class="step-type type-click">Click</span>
+        </div>
+        <div class="step-desc">Clicked on the <strong>Playwright Automation Mastery</strong> course card to open the course detail page.</div>
+        <div class="step-url">https://courses.thetestingacademy.com/courses/playwright-automation-mastery</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Scroll Course Detail Page</span>
+          <span class="step-type type-scroll">Scroll</span>
+        </div>
+        <div class="step-desc">Scrolled through the course detail page multiple times to extract full course content — curriculum, instructor info, testimonials, and pricing.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Navigate back to "All Courses"</span>
+          <span class="step-type type-navigate">Navigate</span>
+        </div>
+        <div class="step-desc">Navigated back to the All Courses listing to check if any other courses contained Playwright content.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">9</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Click on "AI Tester Blueprint 2x" to inspect</span>
+          <span class="step-type type-click">Click</span>
+        </div>
+        <div class="step-desc">Checked the <strong>AI Tester Blueprint 2x</strong> course to see if Playwright is mentioned — confirmed it focuses on Selenium/Java, not Playwright.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">10</div>
+      <div class="step-content">
+        <div class="step-header">
+          <span class="step-title">Check "Job Ready Automation Tester Blueprint"</span>
+          <span class="step-type type-click">Click</span>
+        </div>
+        <div class="step-desc">Inspected the <strong>Job Ready Automation Tester Blueprint</strong> course — confirmed no dedicated Playwright content, focuses on Java/Selenium.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SCREENSHOTS ═══════════════════════════ -->
+<div class="section">
+  <h2><span class="icon">🖼️</span> Screenshots</h2>
+  <div class="gallery">
+
+    <div class="gallery-card">
+      <img src="ss_step1_homepage.png" alt="Step 1 – Homepage" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 1</div>
+        <div class="gallery-caption">Homepage of courses.thetestingacademy.com – "Become a Job Ready Software Tester"</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step2_all_courses.png" alt="Step 2 – All Courses" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 2–3</div>
+        <div class="gallery-caption">All Courses listing page showing full course catalog including Playwright Automation Mastery</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step3_search_playwright.png" alt="Step 3 – Search Playwright" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 4–5</div>
+        <div class="gallery-caption">Searched "Playwright" in search box – 1 matching course found: Playwright Automation Mastery</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step4_playwright_result.png" alt="Step 4 – Playwright Search Result" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 6</div>
+        <div class="gallery-caption">Playwright Automation Mastery course card – Instructor: Dipak Pardeshi, Price: ₹15,000 INR</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step5_course_scroll.png" alt="Step 5 – Course Scroll" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 7</div>
+        <div class="gallery-caption">Scrolled down course page – Instructor profile (Dipak Pardeshi), testimonial by John Smith (Developer), and ₹15,000 pricing section</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step6_all_courses_page2.png" alt="Step 6 – All Courses Page Bottom" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 8</div>
+        <div class="gallery-caption">Bottom of All Courses page – additional courses (GIT Basics, Postman, REST API, Agile/Scrum)</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step7_explore_ai_tester.png" alt="Step 7 – Explore AI Tester" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 9</div>
+        <div class="gallery-caption">Navigated back to All Courses – clicked on AI Tester Blueprint 2x to check for Playwright content</div>
+      </div>
+    </div>
+
+    <div class="gallery-card">
+      <img src="ss_step8_all_courses_final.png" alt="Step 8 – All Courses Final" />
+      <div class="gallery-meta">
+        <div class="gallery-step-badge">Step 10</div>
+        <div class="gallery-caption">Final state: All Courses page confirming Playwright Automation Mastery is the only dedicated Playwright course</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ RESULTS ═══════════════════════════ -->
+<div class="section" style="margin-bottom: 0;">
+  <h2><span class="icon">✅</span> Course Found: Playwright Automation Mastery</h2>
+  <div class="result-box">
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Course Name</td><td class="highlight">Playwright Automation Mastery 2026</td></tr>
+        <tr><td>Instructor</td><td>Dipak Pardeshi</td></tr>
+        <tr><td>Platform</td><td>The Testing Academy (Pramod Dutta)</td></tr>
+        <tr><td>Price</td><td class="price-tag">₹15,000 INR</td></tr>
+        <tr><td>Duration</td><td>3 Months (Live + Recordings)</td></tr>
+        <tr><td>Lessons</td><td>90+ lessons across 7+ modules</td></tr>
+        <tr><td>Topics Covered</td><td>JavaScript ES6+, TypeScript, Playwright Fundamentals, Advanced E2E Testing, AI Integration</td></tr>
+        <tr><td>Course URL</td><td><a href="https://courses.thetestingacademy.com/courses/playwright-automation-mastery" style="color:var(--accent);">courses.thetestingacademy.com/courses/playwright-automation-mastery</a></td></tr>
+        <tr><td>Student Feedback</td><td>"Highly Recommended. Easy to Understand, Informative, Very Well Organized." – John Smith, Developer</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <span>🤖 Generated by AI Browser Agent – Antigravity</span>
+  <span>Target: courses.thetestingacademy.com &nbsp;|&nbsp; 15 March 2026, 12:39 IST</span>
+</footer>
+
+</body>
+</html>
