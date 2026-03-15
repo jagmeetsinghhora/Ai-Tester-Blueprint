@@ -1,0 +1,17 @@
+{
+  "name": "playwright-mcp-login-tests",
+  "version": "1.0.0",
+  "description": "Playwright MCP Login Automation — RICE POT Framework",
+  "main": "scripts/login_tests.js",
+  "scripts": {
+    "test": "node scripts/login_tests.js",
+    "generate-excel": "node testcases/generate_excel.js"
+  },
+  "dependencies": {
+    "playwright": "^1.42.0",
+    "exceljs": "^4.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

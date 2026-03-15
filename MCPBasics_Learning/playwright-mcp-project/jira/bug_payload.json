@@ -1,0 +1,91 @@
+{
+  "fields": {
+    "project": {
+      "key": "QA"
+    },
+    "summary": "Login fails when multilingual credentials (Arabic/Chinese) are used",
+    "description": {
+      "type": "doc",
+      "version": 1,
+      "content": [
+        {
+          "type": "heading",
+          "attrs": { "level": 2 },
+          "content": [{ "type": "text", "text": "Bug Report — TC-005: Multilingual Login Failure" }]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "The login form does not correctly handle Unicode characters (Arabic script and Chinese characters). When multilingual credentials are entered, the application crashes or returns a 500 server error instead of gracefully rejecting the input."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": { "level": 3 },
+          "content": [{ "type": "text", "text": "Steps to Reproduce" }]
+        },
+        {
+          "type": "orderedList",
+          "content": [
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Navigate to https://app.vwo.com (staging)" }] }] },
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Enter Arabic email: مستخدم@مثال.كوم" }] }] },
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Enter Chinese input: 测试@例子.com" }] }] },
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Click the Login button" }] }] }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": { "level": 3 },
+          "content": [{ "type": "text", "text": "Expected Result" }]
+        },
+        {
+          "type": "paragraph",
+          "content": [{ "type": "text", "text": "System should gracefully reject multilingual input with an appropriate error message such as 'Invalid credentials' or 'Unsupported character set'." }]
+        },
+        {
+          "type": "heading",
+          "attrs": { "level": 3 },
+          "content": [{ "type": "text", "text": "Actual Result" }]
+        },
+        {
+          "type": "paragraph",
+          "content": [{ "type": "text", "text": "Login system crashes / returns 500 server error when Unicode characters are submitted." }]
+        },
+        {
+          "type": "heading",
+          "attrs": { "level": 3 },
+          "content": [{ "type": "text", "text": "Environment" }]
+        },
+        {
+          "type": "bulletList",
+          "content": [
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Browser: Chromium (Playwright)" }] }] },
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "OS: macOS" }] }] },
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Automation: Playwright MCP + Node.js 18" }] }] },
+            { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Test ID: TC-005" }] }] }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": { "level": 3 },
+          "content": [{ "type": "text", "text": "Attachments" }]
+        },
+        {
+          "type": "paragraph",
+          "content": [{ "type": "text", "text": "Screenshot: screenshots/TC-005_multilingual_FAIL.png" }]
+        }
+      ]
+    },
+    "issuetype": {
+      "name": "Bug"
+    },
+    "priority": {
+      "name": "Medium"
+    },
+    "labels": ["login", "multilingual", "unicode", "automation", "regression"],
+    "environment": "Staging | Playwright MCP | Node.js 18 | macOS | Chromium"
+  }
+}
